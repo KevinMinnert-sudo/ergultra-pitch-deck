@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ErgUltra — Pitch Deck &amp; App Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Brand accent */
+    --violet: #7C3AED;
+    --deep-violet: #6D28D9;
+    --light-violet: #A78BFA;
+    --accent-text: #6D28D9;      /* readable violet on light */
+    --violet-glow: rgba(124, 58, 237, 0.14);
+
+    /* LIGHT surfaces (design-tokens: theme.config.js .light) */
+    --bg: #F6F5FA;
+    --bg-2: #EFEDF5;
+    --panel: #FFFFFF;
+    --panel-2: #F6F4FB;
+    --card-emphasis: #F0ECFF;
+    --active: #F5F3FF;
+    --border: #DDD6FE;
+    --separator: #E5E7EB;
+
+    /* Typography */
+    --fg: #1F2937;
+    --muted: #4B5563;
+    --muted-2: #6B7280;
+
+    /* Status (light-contrast values) */
+    --ok: #15803D;
+    --warn: #B45309;
+    --crit: #DC2626;
+
+    /* Dark app-frame palette (app stays dark mode) */
+    --app-bg: #0D0B11;
+    --app-border: #2D2640;
+    --app-fg: #FFFFFF;
+    --app-muted: #9CA3AF;
+    --app-tertiary: #6B7280;
+
+    --card-shadow: 0 1px 2px rgba(31, 41, 55, 0.05), 0 8px 24px -16px rgba(31, 41, 55, 0.20);
+
+    --font-head: "Space Grotesk", system-ui, sans-serif;
+    --font-body: "DM Sans", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+
+  /* ---------- Deck layout ---------- */
+  .deck { display: block; }
+
+  .slide {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    padding: 72px 8vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid var(--separator);
+    overflow: hidden;
+    scroll-snap-align: start;
+  }
+
+  .deck.present {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+  }
+  .deck.present .slide { height: 100vh; }
+
+  .slide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(900px 500px at 85% -10%, var(--violet-glow), transparent 60%),
+      radial-gradient(720px 500px at -10% 110%, rgba(124,58,237,0.07), transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .slide > * { position: relative; z-index: 1; }
+
+  /* ---------- Typography ---------- */
+  h1, h2, h3, .eyebrow { font-family: var(--font-head); letter-spacing: -0.02em; }
+  h1 { font-size: clamp(2.6rem, 6vw, 5.2rem); font-weight: 700; line-height: 1.02; color: var(--fg); }
+  h2 { font-size: clamp(1.9rem, 3.6vw, 3.1rem); font-weight: 600; line-height: 1.08; color: var(--fg); }
+  h3 { font-size: clamp(1.05rem, 1.6vw, 1.35rem); font-weight: 600; color: var(--fg); }
+  p { color: var(--muted); font-size: clamp(1rem, 1.25vw, 1.18rem); line-height: 1.6; }
+  .lead { color: var(--fg); font-size: clamp(1.1rem, 1.5vw, 1.4rem); line-height: 1.55; }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    text-transform: uppercase; letter-spacing: 0.22em;
+    font-size: 0.72rem; font-weight: 600; color: var(--accent-text);
+    margin-bottom: 22px;
+  }
+  .eyebrow::before {
+    content: ""; width: 26px; height: 2px; background: var(--violet); border-radius: 2px;
+  }
+  .mono { font-family: var(--font-mono); }
+  .accent { color: var(--accent-text); }
+  .fg { color: var(--fg); }
+
+  /* ---------- Cover ---------- */
+  .cover { justify-content: center; }
+  .logo { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 40px; }
+  .logo-mark {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(140deg, var(--violet), var(--deep-violet));
+    display: grid; place-items: center;
+    font-family: var(--font-mono); font-weight: 700; font-size: 1.4rem; color: #fff;
+    box-shadow: 0 10px 30px -6px var(--violet-glow);
+  }
+  .logo-word { font-family: var(--font-head); font-weight: 700; font-size: 1.3rem; letter-spacing: -0.01em; color: var(--fg); }
+  .logo-word span { color: var(--accent-text); }
+  .brand-logo { align-self: flex-start; margin-bottom: 40px; }
+  .brand-logo img { height: 50px; width: auto; display: block; }
+  .brand-logo.lg img { height: 64px; }
+  .cover h1 { max-width: 16ch; margin-bottom: 26px; }
+  .cover .lead { max-width: 60ch; }
+  .cover-meta { margin-top: 54px; display: flex; flex-wrap: wrap; gap: 14px; }
+  .chip {
+    font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 999px; padding: 8px 16px;
+    background: var(--panel);
+  }
+  .chip.hl { color: var(--fg); border-color: var(--violet); background: var(--active); }
+
+  /* ---------- Grid helpers ---------- */
+  .grid { display: grid; gap: 20px; }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 900px) {
+    .g2, .g3, .g4 { grid-template-columns: 1fr; }
+    .slide { padding: 64px 6vw; }
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 26px;
+    box-shadow: var(--card-shadow);
+  }
+  .card h3 { margin-bottom: 10px; }
+  .card p { font-size: 0.98rem; }
+  .card .num {
+    font-family: var(--font-mono); font-size: 2.2rem; font-weight: 700; color: var(--fg);
+    line-height: 1; margin-bottom: 8px; display: block;
+  }
+  .card .num small { font-size: 1rem; color: var(--accent-text); }
+  .card.violet {
+    border-color: var(--violet);
+    background: var(--card-emphasis);
+  }
+  .card .tag {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.68rem;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-text);
+    border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; margin-bottom: 14px;
+  }
+
+  .head-row { margin-bottom: 40px; max-width: 70ch; }
+  .head-row h2 { margin-bottom: 16px; }
+
+  ul.clean { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  ul.clean li { position: relative; padding-left: 30px; color: var(--muted); line-height: 1.5; font-size: 1.05rem; }
+  ul.clean li::before {
+    content: ""; position: absolute; left: 0; top: 9px; width: 8px; height: 8px;
+    background: var(--violet); border-radius: 3px; box-shadow: 0 0 12px var(--violet-glow);
+  }
+  ul.clean li strong { color: var(--fg); font-weight: 600; }
+
+  /* ---------- Loop diagram ---------- */
+  .loop { display: flex; flex-wrap: wrap; align-items: stretch; gap: 12px; margin-top: 10px; }
+  .loop-step {
+    flex: 1 1 0; min-width: 150px;
+    border: 1px solid var(--border); border-radius: 16px; padding: 22px 20px;
+    background: var(--panel); position: relative; box-shadow: var(--card-shadow);
+  }
+  .loop-step .idx { font-family: var(--font-mono); color: var(--accent-text); font-size: 0.8rem; }
+  .loop-step h3 { margin: 8px 0 6px; font-size: 1.15rem; }
+  .loop-step p { font-size: 0.9rem; }
+  .loop-arrow { align-self: center; color: var(--violet); font-size: 1.6rem; }
+  @media (max-width: 900px) { .loop-arrow { display: none; } }
+
+  /* ---------- Story ---------- */
+  .story-wrap { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; align-items: center; }
+  @media (max-width: 900px) { .story-wrap { grid-template-columns: 1fr; } }
+  .story-quote { border-left: 3px solid var(--violet); padding: 18px 0 18px 26px; margin: 26px 0; }
+  .story-quote p { color: var(--fg); font-size: 1.25rem; font-style: italic; line-height: 1.5; }
+  .story-side { display: flex; flex-direction: column; gap: 16px; }
+  .fact { border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; background: var(--panel); box-shadow: var(--card-shadow); }
+  .fact .k { font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted-2); }
+  .fact .v { font-family: var(--font-head); font-size: 1.35rem; font-weight: 600; margin-top: 6px; color: var(--fg); }
+
+  /* ---------- Table ---------- */
+  table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  th, td { text-align: left; padding: 13px 16px; border-bottom: 1px solid var(--separator); }
+  th { font-family: var(--font-head); font-weight: 600; color: var(--fg); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; background: var(--panel-2); }
+  td { color: var(--muted); }
+  td strong { color: var(--fg); font-weight: 600; }
+  td.mono, th.mono { font-family: var(--font-mono); }
+  tr:last-child td { border-bottom: none; }
+  .table-wrap { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--panel); box-shadow: var(--card-shadow); }
+
+  .status { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 0.82rem; }
+  .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; }
+  .status.ok::before { background: var(--ok); } .status.ok { color: var(--ok); }
+  .status.warn::before { background: var(--warn); } .status.warn { color: var(--warn); }
+  .status.crit::before { background: var(--crit); } .status.crit { color: var(--crit); }
+
+  /* ---------- Section divider ---------- */
+  .divider { justify-content: center; text-align: left; }
+  .divider .big-num { font-family: var(--font-mono); color: var(--accent-text); font-size: 1rem; margin-bottom: 18px; }
+  .divider h1 { font-size: clamp(2.4rem, 5.5vw, 4.6rem); max-width: 20ch; }
+  .divider p { max-width: 60ch; margin-top: 22px; font-size: 1.2rem; }
+
+  /* ---------- Stack layers ---------- */
+  .layers { display: flex; flex-direction: column; gap: 10px; }
+  .layer {
+    display: grid; grid-template-columns: 180px 1fr; gap: 20px; align-items: center;
+    border: 1px solid var(--border); border-radius: 14px; padding: 16px 22px; background: var(--panel); box-shadow: var(--card-shadow);
+  }
+  .layer .l-name { font-family: var(--font-head); font-weight: 600; color: var(--fg); }
+  .layer .l-tech { font-family: var(--font-mono); font-size: 0.9rem; color: var(--muted); }
+  @media (max-width: 900px) { .layer { grid-template-columns: 1fr; gap: 6px; } }
+
+  /* ---------- Ask ---------- */
+  .ask-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 12px; }
+  @media (max-width: 900px) { .ask-grid { grid-template-columns: 1fr; } }
+  .ask-card { border: 1px solid var(--border); border-radius: 18px; padding: 28px; background: var(--panel); box-shadow: var(--card-shadow); }
+  .ask-card .n { font-family: var(--font-mono); color: var(--accent-text); font-size: 0.9rem; }
+  .ask-card h3 { margin: 12px 0 10px; font-size: 1.3rem; }
+
+  /* ---------- Dark app / device frame (app stays dark mode) ---------- */
+  .app-dark {
+    position: relative;
+    background: var(--app-bg);
+    border: 1px solid var(--app-border);
+    border-radius: 22px;
+    padding: 22px 24px;
+    color: var(--app-fg);
+    box-shadow: 0 30px 70px -30px rgba(31, 41, 55, 0.45);
+    overflow: hidden;
+  }
+  .app-dark::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(620px 300px at 82% -30%, rgba(124,58,237,0.40), transparent 60%);
+    pointer-events: none;
+  }
+  .app-dark > * { position: relative; z-index: 1; }
+  .app-dark .ad-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .app-dark .ad-title { font-family: var(--font-head); font-weight: 600; color: var(--app-fg); font-size: 0.95rem; display: flex; gap: 9px; align-items: center; }
+  .app-dark .ad-live { width: 8px; height: 8px; border-radius: 50%; background: #22C55E; box-shadow: 0 0 8px #22C55E; }
+  .app-dark .ad-tag { font-family: var(--font-mono); font-size: 0.68rem; color: var(--light-violet); border: 1px solid var(--app-border); border-radius: 6px; padding: 4px 9px; }
+  .app-dark .ad-row { display: grid; grid-template-columns: 0.9fr 1.4fr; gap: 26px; align-items: center; }
+  @media (max-width: 900px) { .app-dark .ad-row { grid-template-columns: 1fr; gap: 18px; } }
+  .app-dark .ad-timer { font-family: var(--font-mono); font-weight: 700; font-size: clamp(2.2rem, 4vw, 3rem); color: var(--app-fg); letter-spacing: -0.02em; line-height: 1; }
+  .app-dark .ad-sub { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--app-tertiary); margin-bottom: 8px; }
+  .app-dark .ad-chips { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .app-dark .ad-chip { font-family: var(--font-mono); font-size: 0.68rem; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--app-border); color: var(--app-muted); }
+  .app-dark .ad-chip.on { background: var(--violet); border-color: var(--violet); color: #fff; }
+  .app-dark .ad-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .app-dark .ad-metric .k { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--app-tertiary); }
+  .app-dark .ad-metric .v { font-family: var(--font-mono); font-weight: 700; font-size: clamp(1.2rem, 2vw, 1.7rem); color: var(--app-fg); margin-top: 4px; }
+  .app-dark .ad-metric .v small { font-size: 0.7rem; color: var(--app-muted); font-weight: 500; }
+  .app-caption { margin-top: 12px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted-2); display: flex; align-items: center; gap: 8px; }
+  .app-caption::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--app-bg); border: 1px solid var(--app-border); }
+  .ad-curve { width: 100%; height: auto; display: block; }
+
+  /* ---------- iPhone mockup (wraps real dark-mode app screenshots) ---------- */
+  .phone {
+    position: relative; width: 268px; flex: 0 0 auto; margin: 0 auto;
+    background: #0A0A0F; border: 1px solid #2A2A3C; border-radius: 44px; padding: 9px;
+    box-shadow:
+      0 2px 8px rgba(31,41,55,0.14),
+      0 22px 40px -14px rgba(31,41,55,0.38),
+      0 70px 130px -34px rgba(76,29,149,0.50),
+      0 0 0 1.5px rgba(124,58,237,0.20);
+  }
+  .phone-screen {
+    position: relative; border-radius: 36px; overflow: hidden; background: #0A0A0F;
+    padding-top: 26px;
+  }
+  .phone-screen img { width: 100%; display: block; border-radius: 0 0 30px 30px; }
+  .phone-island {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    width: 84px; height: 17px; border-radius: 999px; background: #000; z-index: 3;
+    box-shadow: inset 0 0 0 1px #1b1b26;
+  }
+  .loop-visual { display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: center; margin-top: 32px; }
+  @media (max-width: 900px) { .loop-visual { grid-template-columns: 1fr; gap: 26px; } }
+  .loop-visual .lv-title { font-family: var(--font-head); font-weight: 600; font-size: 1.15rem; color: var(--fg); margin-bottom: 4px; }
+  .loop-visual .lv-lead { color: var(--muted); font-size: 0.98rem; margin-bottom: 16px; max-width: 52ch; }
+  ul.ann { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+  ul.ann li { position: relative; padding-left: 24px; color: var(--muted); line-height: 1.5; font-size: 0.96rem; }
+  ul.ann li::before { content: ""; position: absolute; left: 0; top: 8px; width: 7px; height: 7px; background: var(--violet); border-radius: 2px; box-shadow: 0 0 10px var(--violet-glow); }
+  ul.ann li strong { color: var(--fg); font-weight: 600; }
+
+  /* ---------- Phone rows, sizes & landscape (real dark-mode screenshots) ---------- */
+  .phone-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: clamp(16px, 2.6vw, 34px); margin-top: 26px; }
+  .phone-item { position: relative; display: flex; flex-direction: column; align-items: center; gap: 12px; width: 208px; max-width: 46vw; }
+  .phone-item::before {
+    content: ""; position: absolute; z-index: 0; pointer-events: none;
+    left: 50%; top: -6%; transform: translateX(-50%);
+    width: 150%; height: 96%;
+    background: radial-gradient(52% 52% at 50% 45%, rgba(124,58,237,0.38), transparent 70%);
+    filter: blur(44px);
+  }
+  .phone-item > * { position: relative; z-index: 1; }
+  .phone.phone-sm { width: 208px; border-radius: 36px; padding: 7px; }
+  .phone.phone-sm .phone-screen { border-radius: 30px; padding-top: 21px; }
+  .phone.phone-sm .phone-island { width: 66px; height: 14px; top: 7px; }
+  .phone.phone-xs { width: 176px; border-radius: 30px; padding: 6px; }
+  .phone.phone-xs .phone-screen { border-radius: 24px; padding-top: 17px; }
+  .phone.phone-xs .phone-island { width: 54px; height: 11px; top: 6px; }
+  .phone-cap { text-align: center; max-width: 26ch; }
+  .phone-cap .pc-k { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--violet); }
+  .phone-cap .pc-t { font-family: var(--font-head); font-weight: 600; font-size: 0.98rem; color: var(--fg); margin-top: 3px; }
+  .phone-cap .pc-d { color: var(--muted); font-size: 0.82rem; margin-top: 4px; line-height: 1.45; }
+
+  .phone-landscape {
+    position: relative; width: 100%; max-width: 540px; margin: 22px auto 0;
+    background: #0A0A0F; border: 1px solid #2A2A3C; border-radius: 34px; padding: 10px;
+    box-shadow:
+      0 2px 8px rgba(31,41,55,0.14),
+      0 24px 44px -14px rgba(31,41,55,0.38),
+      0 76px 140px -38px rgba(76,29,149,0.50),
+      0 0 0 1.5px rgba(124,58,237,0.20);
+  }
+  .phone-landscape::before {
+    content: ""; position: absolute; z-index: -1; pointer-events: none;
+    inset: -14% -12% -22%;
+    background: radial-gradient(55% 60% at 50% 45%, rgba(124,58,237,0.34), transparent 72%);
+    filter: blur(52px);
+  }
+  .phone-landscape .pl-screen { border-radius: 26px; overflow: hidden; background: #0A0A0F; }
+  .phone-landscape .pl-screen img { width: 100%; display: block; }
+
+  .split-visual { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 40px; align-items: center; margin-top: 24px; }
+  .split-visual.rev { grid-template-columns: 1.15fr 0.85fr; }
+  @media (max-width: 900px) { .split-visual, .split-visual.rev { grid-template-columns: 1fr; gap: 26px; } }
+
+  /* ---------- Integrations slide ---------- */
+  .intg-head { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+  .intg-logo { height: 30px; width: auto; display: block; }
+  .intg-logo.flame { height: 40px; }
+  .intg-role { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--violet); }
+  .intg-why { color: var(--muted); font-size: 0.95rem; }
+  .intg-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+  @media (max-width: 640px) { .intg-cols { grid-template-columns: 1fr; gap: 14px; } }
+  .intg-k { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg); margin-bottom: 5px; }
+  .intg-cols p { font-size: 0.92rem; }
+
+  /* ---------- Agenda / TOC ---------- */
+  .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 44px; margin-top: 8px; }
+  @media (max-width: 900px) { .toc-grid { grid-template-columns: 1fr; } }
+  .toc-part { grid-column: 1 / -1; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--violet); margin: 20px 0 2px; }
+  .toc-part:first-child { margin-top: 4px; }
+  .toc-item { display: flex; gap: 16px; align-items: baseline; padding: 13px 0; border-bottom: 1px solid var(--separator); }
+  .toc-num { font-family: var(--font-mono); font-size: 0.9rem; color: var(--accent-text); min-width: 26px; }
+  .toc-t { font-family: var(--font-head); font-weight: 600; font-size: 1.02rem; color: var(--fg); }
+  .toc-d { color: var(--muted-2); font-size: 0.84rem; margin-top: 2px; }
+
+  /* ---------- Ergometer explainer ---------- */
+  .erg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 10px; }
+  @media (max-width: 900px) { .erg-grid { grid-template-columns: 1fr; } }
+  .erg-card { border: 1px solid var(--border); border-radius: 18px; padding: 20px 22px 24px; background: var(--panel); box-shadow: var(--card-shadow); display: flex; flex-direction: column; }
+  .erg-photo { height: 200px; display: flex; align-items: center; justify-content: center; background: var(--panel-2); border: 1px solid var(--separator); border-radius: 14px; padding: 16px; margin-bottom: 16px; overflow: hidden; }
+  .erg-photo img { width: 100%; height: 100%; min-width: 0; min-height: 0; object-fit: contain; display: block; }
+  .erg-role { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--violet); }
+  .erg-name { font-family: var(--font-head); font-weight: 700; font-size: 1.4rem; color: var(--fg); margin: 3px 0 8px; }
+  .erg-name small { font-family: var(--font-body); font-weight: 500; font-size: 0.88rem; color: var(--muted-2); }
+  .erg-desc { color: var(--muted); font-size: 0.93rem; line-height: 1.55; }
+  .erg-muscle { margin-top: 12px; font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-text); }
+  .credit { margin-top: 14px; font-family: var(--font-mono); font-size: 0.64rem; color: var(--muted-2); }
+
+  /* ---------- Founder / team ---------- */
+  .founder { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 40px; align-items: center; margin-top: 6px; }
+  @media (max-width: 900px) { .founder { grid-template-columns: 1fr; gap: 26px; } }
+  .founder-badge { border: 1px solid var(--violet); border-radius: 18px; padding: 30px; background: var(--card-emphasis); box-shadow: var(--card-shadow); }
+  .founder-badge .fb-role { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--violet); }
+  .founder-badge .fb-name { font-family: var(--font-head); font-weight: 700; font-size: 1.9rem; color: var(--fg); margin: 8px 0 12px; }
+  .founder-badge p { font-size: 0.95rem; }
+
+  /* ---------- Roadmap ---------- */
+  .roadmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 10px; }
+  @media (max-width: 900px) { .roadmap { grid-template-columns: 1fr; } }
+  .rm-step { border: 1px solid var(--border); border-radius: 16px; padding: 22px; background: var(--panel); box-shadow: var(--card-shadow); }
+  .rm-step .rm-when { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-text); }
+  .rm-step h3 { margin: 9px 0 8px; font-size: 1.1rem; }
+  .rm-step p { font-size: 0.88rem; }
+  .rm-step.now { border-color: var(--violet); background: var(--card-emphasis); }
+
+  /* ---------- Contact ---------- */
+  .contact-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  .contact-chip { font-family: var(--font-mono); font-size: 0.85rem; color: var(--fg); border: 1px solid var(--violet); background: var(--active); border-radius: 999px; padding: 10px 18px; }
+
+  /* ---------- Footer / progress ---------- */
+  .slide-footer {
+    position: absolute; bottom: 26px; left: 8vw; right: 8vw;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted-2);
+    z-index: 2;
+  }
+  .slide-footer .brand { color: var(--muted); }
+
+  .nav {
+    position: fixed; bottom: 22px; right: 22px; z-index: 50;
+    display: flex; gap: 8px; align-items: center;
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+    border: 1px solid var(--border); border-radius: 999px; padding: 8px 10px;
+    box-shadow: 0 10px 30px -12px rgba(31,41,55,0.22);
+  }
+  .nav button {
+    width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border);
+    background: transparent; color: var(--fg); cursor: pointer; font-size: 1rem;
+    display: grid; place-items: center; transition: 0.15s;
+  }
+  .nav button:hover { background: var(--violet); border-color: var(--violet); color: #fff; }
+  .nav .count { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); padding: 0 6px; min-width: 54px; text-align: center; }
+
+  .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--violet); z-index: 60; width: 0; box-shadow: 0 0 12px var(--violet-glow); transition: width 0.2s; }
+
+  .hint { position: fixed; top: 18px; right: 22px; z-index: 50; font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted-2); }
+
+  /* ---------- Print / PDF ---------- */
+  @media print {
+    /* Fixed 16:9 widescreen page (PowerPoint 13.333in x 7.5in) — 1 slide = 1 page. */
+    @page { size: 13.333in 7.5in; margin: 0; }
+    html, body { background: var(--bg) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .nav, .progress-bar, .hint { display: none !important; }
+    .deck, .deck.present { height: auto; overflow: visible; }
+    .slide, .deck.present .slide {
+      width: 13.333in; height: 7.5in; min-height: 0; overflow: hidden;
+      page-break-after: always; break-after: page; page-break-inside: avoid;
+      padding: 0.4in 0.6in; border: none; justify-content: center;
+    }
+    .slide::before { display: block; }
+
+    /* Compressed typography for a single fixed page */
+    h1 { font-size: 3rem; }
+    h2 { font-size: 1.85rem; }
+    h3 { font-size: 1.02rem; }
+    p { font-size: 0.84rem; line-height: 1.42; }
+    .lead { font-size: 1rem; }
+    .eyebrow { margin-bottom: 10px; font-size: 0.64rem; }
+    .head-row { margin-bottom: 10px; }
+
+    /* Device mockups shrink so dense slides fit one page */
+    .phone-row { margin-top: 5px; gap: 14px; }
+    .phone-item { width: 106px; gap: 5px; }
+    .phone-item::before, .phone-landscape::before { display: none; }
+    .phone.phone-sm { width: 106px; padding: 4px; border-radius: 20px; }
+    .phone.phone-sm .phone-screen { border-radius: 17px; padding-top: 12px; }
+    .phone.phone-sm .phone-island { width: 40px; height: 8px; top: 4px; }
+    .phone.phone-xs { width: 108px; }
+    .phone-cap { max-width: 19ch; }
+    .phone-cap .pc-k { font-size: 0.52rem; }
+    .phone-cap .pc-t { font-size: 0.74rem; }
+    .phone-cap .pc-d { font-size: 0.64rem; line-height: 1.35; }
+    .phone-landscape { max-width: 196px; margin-top: 6px; padding: 5px; border-radius: 16px; }
+    .split-visual { gap: 16px; margin-top: 8px; }
+    /* Viral-loop visual (uses full-size .phone) */
+    .loop { gap: 8px; margin-top: 6px; }
+    .loop-step { padding: 10px 12px; }
+    .loop-step h3 { margin: 6px 0 4px; font-size: 1rem; }
+    .loop-step p { font-size: 0.72rem; }
+    .loop-visual { grid-template-columns: 168px 1fr; gap: 22px; margin-top: 12px; }
+    .loop-visual .phone { width: 150px; padding: 6px; border-radius: 26px; }
+    .loop-visual .phone .phone-screen { padding-top: 16px; border-radius: 22px; }
+    .loop-visual .phone .phone-island { width: 46px; height: 10px; top: 6px; }
+    .loop-visual .lv-title { font-size: 1rem; }
+    .loop-visual .lv-lead { font-size: 0.8rem; margin-bottom: 10px; }
+    ul.ann { gap: 7px; }
+    ul.ann li { font-size: 0.76rem; padding-left: 20px; }
+
+    /* Cards, grids, lists, tables tighter */
+    .card { padding: 13px; border-radius: 12px; }
+    .card p { font-size: 0.78rem; }
+    .card .num { font-size: 1.6rem; }
+    .card .tag { margin-bottom: 8px; }
+    .grid { gap: 12px; }
+    .g2, .g3, .g4 { margin-top: 0; }
+    .layer { padding: 9px 16px; }
+    .layer .l-tech { font-size: 0.76rem; }
+    .loop { gap: 8px; }
+    .loop-step { padding: 13px 14px; }
+    .loop-step p { font-size: 0.74rem; }
+    ul.clean { gap: 8px; }
+    ul.clean li { font-size: 0.82rem; padding-left: 22px; }
+    table { font-size: 0.74rem; }
+    th, td { padding: 4px 10px; }
+    .ask-card { padding: 18px; }
+    #maturity-note { margin-top: 10px !important; font-size: 0.78rem; }
+
+    /* Ergometer slide */
+    .erg-photo { height: 116px; padding: 9px; margin-bottom: 10px; }
+    .erg-name { font-size: 1.08rem; margin: 2px 0 6px; }
+    .erg-desc { font-size: 0.76rem; }
+    .erg-muscle { margin-top: 8px; }
+
+    /* Force-curve concept block */
+    .app-dark { padding: 10px 12px; }
+    .app-dark .ad-bar { margin-bottom: 10px; }
+    .ad-curve { height: 66px; }
+    .app-dark .ad-chips { margin-top: 8px; }
+    .app-caption { margin-top: 6px; font-size: 0.6rem; }
+    .credit { margin-top: 8px; }
+
+    /* Agenda / roadmap / story compaction */
+    .toc-item { padding: 8px 0; }
+    .toc-t { font-size: 0.92rem; }
+    .toc-d { font-size: 0.74rem; }
+    .roadmap { gap: 12px; }
+    .rm-step { padding: 15px; }
+    .story-quote p { font-size: 1.05rem; }
+    .fact { padding: 12px 16px; }
+    .fact .v { font-size: 1.1rem; }
+
+    .slide-footer { bottom: 0.26in; left: 0.6in; right: 0.6in; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+<div class="hint">&larr; &rarr; to navigate &middot; P for presentation mode &middot; Ctrl/Cmd+P for PDF</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1. COVER -->
+  <section class="slide cover">
+    <div class="brand-logo lg">
+      <img src="ergultra-logo.png" alt="ErgUltra" />
+    </div>
+    <span class="eyebrow">Pitch Deck &amp; Technical App Audit</span>
+    <h1>Backyard Ultra.<br />On the Concept2 Ergometer.</h1>
+    <p class="lead">The first app to bring the world's toughest endurance format to the indoor erg — with a full training platform, live PM5 integration, and community.</p>
+    <div class="cover-meta">
+      <span class="chip hl">For: Technical review &amp; final polish</span>
+      <span class="chip">React Native &middot; Expo SDK 55</span>
+      <span class="chip">~130,000 LOC</span>
+      <span class="chip">3,000+ tests</span>
+      <span class="chip mono">2026</span>
+    </div>
+    <div class="slide-footer"><span class="brand">ErgUltra — Confidential / NDA</span><span>01</span></div>
+  </section>
+
+  <!-- AGENDA -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Agenda</span>
+      <h2>What this deck covers.</h2>
+      <p>Two parts. First the product and the market opportunity — then an honest technical audit of how ErgUltra is built, and exactly where we're looking for a partner.</p>
+    </div>
+    <div class="toc-grid">
+      <div class="toc-part">Part 1 &middot; Product &amp; opportunity</div>
+      <div class="toc-item"><span class="toc-num">01</span><div><div class="toc-t">Story &amp; problem</div><div class="toc-d">Why ErgUltra exists and the gap in the market.</div></div></div>
+      <div class="toc-item"><span class="toc-num">02</span><div><div class="toc-t">Solution &amp; the three ergometers</div><div class="toc-d">One app, three forces — and the machines it runs on.</div></div></div>
+      <div class="toc-item"><span class="toc-num">03</span><div><div class="toc-t">Viral loop &amp; ecosystem</div><div class="toc-d">The behavioral model plus Strava &amp; Concept2 sync.</div></div></div>
+      <div class="toc-item"><span class="toc-num">04</span><div><div class="toc-t">Market, competition &amp; business model</div><div class="toc-d">Timing, differentiation and how we monetize.</div></div></div>
+      <div class="toc-part">Part 2 &middot; Technical app audit</div>
+      <div class="toc-item"><span class="toc-num">05</span><div><div class="toc-t">Stack &amp; architecture</div><div class="toc-d">A modern, device-near, cross-platform build.</div></div></div>
+      <div class="toc-item"><span class="toc-num">06</span><div><div class="toc-t">The BLE moat</div><div class="toc-d">PM5 &amp; CSAFE — where the hard-to-copy value sits.</div></div></div>
+      <div class="toc-item"><span class="toc-num">07</span><div><div class="toc-t">Science, quality &amp; security</div><div class="toc-d">Data depth, engineering discipline, honest status.</div></div></div>
+      <div class="toc-item"><span class="toc-num">08</span><div><div class="toc-t">Team, roadmap &amp; the ask</div><div class="toc-d">Who's building it and what we need from a partner.</div></div></div>
+    </div>
+    <div class="slide-footer"><span class="brand">Agenda</span><span>02</span></div>
+  </section>
+
+  <!-- 2. STORY -->
+  <section class="slide">
+    <span class="eyebrow">Why ErgUltra exists</span>
+    <div class="story-wrap">
+      <div>
+        <h2>It started with a training partner and a crazy idea.</h2>
+        <p style="margin-top:18px">I trained with <strong class="fg">Oli Eman</strong> — friend, training partner, Ironman finisher and Backyard Ultra runner. In a Backyard Ultra you run, in <span class="accent">last-man-standing format</span>, one loop of roughly <span class="accent">6.7&nbsp;km</span> every hour, again and again. Miss a round and you're out. Exactly one winner remains.</p>
+        <div class="story-quote">
+          <p>&ldquo;We carried this format over to the Concept2 in training — round after round, until only one is left. Then I wanted an app for it. There was none.&rdquo;</p>
+        </div>
+        <p>That session turned into a mission. I researched, worked through podcasts and YouTube, dug into the sport science and the tech — and built ErgUltra. Because to this day there is no solution for it on the market.</p>
+      </div>
+      <div class="story-side">
+        <div class="phone phone-xs">
+          <div class="phone-screen">
+            <span class="phone-island"></span>
+            <img src="screen-onboarding.png" alt="ErgUltra onboarding — 'Every ultra begins with a single stroke' (dark mode)" />
+          </div>
+        </div>
+        <div class="fact"><div class="k">The trigger</div><div class="v">Backyard Ultra in training</div></div>
+        <div class="fact"><div class="k">Loop distance</div><div class="v mono">6.7 km / round</div></div>
+        <div class="fact"><div class="k">Market</div><div class="v accent">No solution exists</div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="brand">The story</span><span>02</span></div>
+  </section>
+
+  <!-- 3. PROBLEM -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">The problem</span>
+      <h2>Millions of erg athletes. But no app for what truly excites them.</h2>
+      <p>Concept2 is the global standard for indoor rowing, ski and bike machines (&ldquo;ergs&rdquo;). Yet the software ecosystem stops at plain data recording — competitive thrill, structured training and community are missing from a single product.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card"><span class="tag">Competition</span><h3>No ultra format</h3><p>The Backyard / last-man-standing format exists for the erg only as improvised web tools — not as a native, device-integrated app.</p></div>
+      <div class="card"><span class="tag">Training</span><h3>No system</h3><p>ErgData only records. Periodization, fitness tests, zones and coaching are left for everyone to piece together.</p></div>
+      <div class="card"><span class="tag">Community</span><h3>No Strava for the erg</h3><p>There is no social place where erg performance becomes visible, shareable and motivating.</p></div>
+    </div>
+    <div class="slide-footer"><span class="brand">The problem</span><span>03</span></div>
+  </section>
+
+  <!-- 4. SOLUTION -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">The solution</span>
+      <h2>One app. Three forces that together form a loop.</h2>
+    </div>
+    <div class="grid g3">
+      <div class="card violet"><span class="tag">01 &middot; Ultra</span><h3>Backyard Ultra mode</h3><p>Solo and live events on SkiErg, RowErg &amp; BikeErg — with erg rotation, round countdown, an authentic race-start sequence and live metrics straight from the PM5 (the erg's on-board computer).</p></div>
+      <div class="card"><span class="tag">02 &middot; Training</span><h3>AI training platform</h3><p>48 workouts, custom builder, periodized training plans, 4 fitness tests with VO2max, HR/HRV analysis and an AI voice coach.</p></div>
+      <div class="card"><span class="tag">03 &middot; Community</span><h3>&ldquo;Strava for Concept2&rdquo;</h3><p>Activity feed, kudos, followers, clubs, challenges, leaderboards and Concept2 Logbook sync — performance becomes visible and shareable.</p></div>
+    </div>
+    <div class="phone-row">
+      <div class="phone-item">
+        <div class="phone phone-sm"><div class="phone-screen"><span class="phone-island"></span>
+          <img src="screen-ultra-tab.png" alt="ErgUltra Ultra tab — Solo Ultra, Backyard rules, per-erg distances (dark mode)" />
+        </div></div>
+        <div class="phone-cap"><div class="pc-k">01 &middot; Ultra</div><div class="pc-t">Backyard Ultra</div><div class="pc-d">Solo &amp; live rounds on Ski, Row &amp; Bike with erg rotation.</div></div>
+      </div>
+      <div class="phone-item">
+        <div class="phone phone-sm"><div class="phone-screen"><span class="phone-island"></span>
+          <img src="screen-training-select.png" alt="ErgUltra workout selection — Tabata, intervals, multi-erg (dark mode)" />
+        </div></div>
+        <div class="phone-cap"><div class="pc-k">02 &middot; Training</div><div class="pc-t">Workout engine</div><div class="pc-d">48 workouts, custom builder, fitness tests &amp; AI coach.</div></div>
+      </div>
+      <div class="phone-item">
+        <div class="phone phone-sm"><div class="phone-screen"><span class="phone-island"></span>
+          <img src="screen-community-post.png" alt="ErgUltra community feed — activity post with photo (dark mode)" />
+        </div></div>
+        <div class="phone-cap"><div class="pc-k">03 &middot; Community</div><div class="pc-t">Strava for Concept2</div><div class="pc-d">Feed, kudos, photos &amp; shareable performance.</div></div>
+      </div>
+    </div>
+    <div class="app-caption">In-app screenshots — dark mode (the app itself stays dark)</div>
+    <div class="slide-footer"><span class="brand">The solution</span><span>04</span></div>
+  </section>
+
+  <!-- ERGOMETERS (context for non-erg readers) -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">The hardware &middot; context for non-erg readers</span>
+      <h2>Three machines. One on-board computer.</h2>
+      <p>Concept2 builds the world's most-used ergometers (&ldquo;ergs&rdquo; — training machines that precisely measure every watt). All three share the same on-board computer, the <strong class="fg">PM5 (Performance Monitor 5)</strong>, which ErgUltra programs and reads live over Bluetooth. The Backyard Ultra rotation means switching between them, round after round.</p>
+    </div>
+    <div class="erg-grid">
+      <div class="erg-card">
+        <div class="erg-photo"><img src="c2-rowerg.png" alt="Concept2 RowErg indoor rowing machine" /></div>
+        <div class="erg-role">Row</div>
+        <div class="erg-name">RowErg <small>&middot; rowing</small></div>
+        <div class="erg-desc">The gold standard of indoor rowing. A full-body, low-impact stroke that drives legs, core, back and arms in one movement.</div>
+        <div class="erg-muscle">Full body &middot; legs-led</div>
+      </div>
+      <div class="erg-card">
+        <div class="erg-photo"><img src="c2-skierg.png" alt="Concept2 SkiErg indoor ski trainer" /></div>
+        <div class="erg-role">Ski</div>
+        <div class="erg-name">SkiErg <small>&middot; Nordic skiing</small></div>
+        <div class="erg-desc">The double-poling motion of cross-country skiing. Upper-body and core dominant, with a high cardio demand.</div>
+        <div class="erg-muscle">Upper body &middot; core</div>
+      </div>
+      <div class="erg-card">
+        <div class="erg-photo"><img src="c2-bikeerg.png" alt="Concept2 BikeErg indoor exercise bike" /></div>
+        <div class="erg-role">Bike</div>
+        <div class="erg-name">BikeErg <small>&middot; cycling</small></div>
+        <div class="erg-desc">An air-resistance bike with the same flywheel feel. Leg-dominant power in a smooth, responsive ride.</div>
+        <div class="erg-muscle">Legs &middot; lower body</div>
+      </div>
+    </div>
+    <p class="credit">Product images &copy; Concept2 — shown for identification.</p>
+    <div class="card violet" style="margin-top:16px"><p style="color:var(--fg)"><strong>Why this matters for ErgUltra:</strong> one BLE/PM5 protocol drives all three, so a single app covers every discipline — and the multi-erg rotation (Ski &rarr; Row &rarr; Bike) is a format no competitor offers.</p></div>
+    <div class="slide-footer"><span class="brand">The ergometers</span><span>05</span></div>
+  </section>
+
+  <!-- 5. VIRAL LOOP -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Product logic</span>
+      <h2>The viral loop drives every design decision.</h2>
+      <p>The app isn't built as a feature list but along a behavioral model. The post-workout experience is deliberately the hub between performance and community.</p>
+    </div>
+    <div class="loop">
+      <div class="loop-step"><div class="idx">01</div><h3>See</h3><p>Feed &amp; social proof (Crew)</p></div>
+      <div class="loop-arrow">&rarr;</div>
+      <div class="loop-step"><div class="idx">02</div><h3>Train</h3><p>Session &amp; execution</p></div>
+      <div class="loop-arrow">&rarr;</div>
+      <div class="loop-step"><div class="idx">03</div><h3>Aspire</h3><p>Ultra, goals, benchmarks</p></div>
+      <div class="loop-arrow">&rarr;</div>
+      <div class="loop-step"><div class="idx">04</div><h3>Document</h3><p>History &amp; identity</p></div>
+      <div class="loop-arrow">&rarr;</div>
+      <div class="loop-step"><div class="idx">05</div><h3>Share</h3><p>Share cards &amp; feed post</p></div>
+    </div>
+    <div class="loop-visual">
+      <div class="phone">
+        <div class="phone-screen">
+          <span class="phone-island"></span>
+          <img src="screen-crew-feed.png" alt="ErgUltra Crew feed — weekly summary and activity feed (dark mode)" />
+        </div>
+      </div>
+      <div>
+        <div class="lv-title">Step 01 &middot; See &mdash; the Crew feed opens the loop.</div>
+        <p class="lv-lead">The home tab greets the athlete with their own week and the activity of people they follow &mdash; the social proof that pulls them back in.</p>
+        <ul class="ann">
+          <li><strong>Weekly summary at a glance</strong> &mdash; workouts, distance, time and calories, with a 7-day activity bar.</li>
+          <li><strong>Following &amp; Global feeds</strong> &mdash; performance becomes visible and shareable (&ldquo;Strava for Concept2&rdquo;).</li>
+          <li><strong>Persistent Crew &middot; Training &middot; Ultra &middot; Profile navigation</strong> &mdash; the four-tab information architecture.</li>
+          <li><strong>JetBrains Mono metrics on a dark canvas</strong> &mdash; the app itself stays dark mode by design.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="app-caption">In-app screenshot &mdash; Crew feed (dark mode)</div>
+    <div class="slide-footer"><span class="brand">Product logic</span><span>05</span></div>
+  </section>
+
+  <!-- 6. ECOSYSTEM / INTEGRATIONS -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Ecosystem &amp; data portability</span>
+      <h2>We meet athletes where their data already lives.</h2>
+      <p>ErgUltra is not a walled garden. Two integrations connect it to the athlete's existing world — one for <strong class="fg">reach</strong>, one for <strong class="fg">credibility</strong>. Both are implemented today via OAuth (Supabase Edge Functions, tokens stored server-side).</p>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="intg-head">
+          <img class="intg-logo flame" src="strava-logo.svg" alt="Strava logo" />
+          <div>
+            <h3 style="margin:0">Strava</h3>
+            <span class="intg-role">Reach &amp; social distribution</span>
+          </div>
+        </div>
+        <p class="intg-why"><strong class="fg">Why it matters:</strong> Strava is where endurance athletes already keep their training life. Every erg session pushed there reaches an audience far beyond the erg niche.</p>
+        <div class="intg-cols">
+          <div><div class="intg-k">Strategy</div><p>Acquisition engine — each shared workout is organic reach and social proof inside athletes' existing networks, feeding the See&nbsp;&rarr;&nbsp;Train&nbsp;&rarr;&nbsp;Share loop at near-zero acquisition cost.</p></div>
+          <div><div class="intg-k">User benefit</div><p>One training log for everything. Kudos and visibility from the whole athletic circle — no manual double-entry.</p></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="intg-head">
+          <img class="intg-logo" src="concept2-logo.svg" alt="Concept2 logo" />
+          <span class="intg-role">Official record &amp; trust</span>
+        </div>
+        <p class="intg-why"><strong class="fg">Why it matters:</strong> The Concept2 Online Logbook is the sport's system of record. Syncing to it makes ErgUltra a first-class citizen in the Concept2 world, not a silo.</p>
+        <div class="intg-cols">
+          <div><div class="intg-k">Strategy</div><p>Credibility &amp; retention — results flow into official Concept2 challenges and rankings; open data portability lowers switching risk and positions ErgUltra as the hub, not a lock-in.</p></div>
+          <div><div class="intg-k">User benefit</div><p>Sessions count toward official Concept2 challenges and season rankings, with a verified, portable history the athlete always owns.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="card violet" style="margin-top:22px"><p style="color:var(--fg)"><strong>Integrations are strategy, not plumbing:</strong> Strava drives low-cost acquisition and viral reach; the Concept2 Logbook delivers credibility and keeps athletes inside the ecosystem. Together they make ErgUltra the central hub of an erg athlete's data — with sharing tracked as a core conversion event (PostHog <span class="mono">share</span>).</p></div>
+    <div class="slide-footer"><span class="brand">Ecosystem</span><span>06</span></div>
+  </section>
+
+  <!-- 7. MARKET -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Market &amp; timing</span>
+      <h2>A growing market meets an exploding trend.</h2>
+    </div>
+    <div class="grid g4">
+      <div class="card"><span class="num">2M+</span><p>registered users in the Concept2 Online Logbook worldwide.</p></div>
+      <div class="card"><span class="num">5M+</span><p>CrossFit athletes use Concept2 machines as standard.</p></div>
+      <div class="card"><span class="num">500+</span><p>Backyard Ultra events in 2025 — up from a handful in 2012 (format by Lazarus Lake).</p></div>
+      <div class="card"><span class="num">6–8%</span><p>annual growth of the global indoor rowing market.</p></div>
+    </div>
+    <p style="margin-top:24px">The COVID home-fitness boom hugely expanded the installed erg base. The Backyard format is growing exponentially. The indoor variant is the logical next step — and currently unclaimed.</p>
+    <div class="slide-footer"><span class="brand">Market &amp; timing</span><span>07</span></div>
+  </section>
+
+  <!-- 7. COMPETITION / USP -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Competition &amp; differentiation</span>
+      <h2>No one covers all three layers.</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Player</th><th>Strength</th><th>Gap</th><th>ErgUltra advantage</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ErgRace</strong></td><td>Established format</td><td>Web only, no app, no training</td><td>Native app + training + AI coach</td></tr>
+          <tr><td><strong>Concept2 Logbook</strong></td><td>Large user base</td><td>No social, no ultra</td><td>Ultra mode + social + BLE</td></tr>
+          <tr><td><strong>ErgData</strong></td><td>Official PM5 app</td><td>Recording only</td><td>Ultra + plan + community</td></tr>
+          <tr><td><strong>Strava</strong></td><td>Largest fitness community</td><td>No erg, no BLE</td><td>Erg-specialized, PM5-native</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid g3" style="margin-top:22px">
+      <div class="card violet"><h3>USP 1</h3><p>Only native app for Backyard Ultra on ergometers.</p></div>
+      <div class="card"><h3>USP 2</h3><p>Multi-erg rotation: SkiErg + RowErg + BikeErg in sequence.</p></div>
+      <div class="card"><h3>USP 3</h3><p>Direct PM5 BLE programming instead of plain data display.</p></div>
+    </div>
+    <div class="slide-footer"><span class="brand">Competition</span><span>08</span></div>
+  </section>
+
+  <!-- 8. BUSINESS MODEL -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Business model</span>
+      <h2>Freemium with a clear premium difference.</h2>
+      <p>Premium differs noticeably in data depth, motivation, status and shareability — not through artificial limits.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card"><span class="tag">Free</span><h3 style="margin-top:4px">Entry tier</h3><p>Solo Ultra (1 format), a set of workouts, feed &amp; leaderboard — enough to get hooked.</p></div>
+      <div class="card violet"><span class="tag">Pro</span><h3 style="margin-top:4px">Full platform</h3><p>All formats &amp; workouts, custom builder, AI plan, fitness tests, voice coach, C2 sync.</p></div>
+      <div class="card"><span class="tag">Team / Club</span><h3 style="margin-top:4px">Groups &amp; events</h3><p>Pro + club management, team challenges and event organization.</p></div>
+    </div>
+    <p style="margin-top:22px"><strong class="fg">Additionally:</strong> event commissions (organizer + participation) and, long-term, a possible Concept2 hardware partnership. <span class="mono" style="color:var(--muted-2)">Exact price points still to be defined.</span></p>
+    <div class="slide-footer"><span class="brand">Business model</span><span>09</span></div>
+  </section>
+
+  <!-- 9. AUDIT DIVIDER -->
+  <section class="slide divider">
+    <div class="big-num mono">// Part 2</div>
+    <h1>The app audit — how ErgUltra is built.</h1>
+    <p>What follows is the honest technical assessment: stack, architecture, the BLE moat, quality assurance, security — and where we're looking for the final polish.</p>
+    <div class="slide-footer"><span class="brand">App audit</span><span>10</span></div>
+  </section>
+
+  <!-- 10. TECH STACK -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Technology stack</span>
+      <h2>A modern, cross-platform, device-near stack.</h2>
+    </div>
+    <div class="layers">
+      <div class="layer"><span class="l-name">Frontend</span><span class="l-tech">React Native 0.83 &middot; Expo SDK 55 &middot; Expo Router &middot; TypeScript 5.9 (strict)</span></div>
+      <div class="layer"><span class="l-name">Styling / UI</span><span class="l-tech">NativeWind 4 (Tailwind) &middot; NativeWindUI &middot; Dark-mode-first &middot; Ultra-Violet #7C3AED</span></div>
+      <div class="layer"><span class="l-name">Visualization</span><span class="l-tech">React Native Skia &middot; Reanimated 4 — GPU force curves targeting 60&nbsp;fps</span></div>
+      <div class="layer"><span class="l-name">Backend</span><span class="l-tech">Supabase &middot; PostgreSQL &middot; Auth (JWT) &middot; Realtime (WS) &middot; Edge Functions &middot; RLS</span></div>
+      <div class="layer"><span class="l-name">State</span><span class="l-tech">AsyncStorage + Context (local) &middot; TanStack Query v5 (server)</span></div>
+      <div class="layer"><span class="l-name">Device / BLE</span><span class="l-tech">react-native-ble-plx &middot; CSAFE protocol &middot; PM5 Manager &middot; HR belt 0x180D</span></div>
+      <div class="layer"><span class="l-name">Integrations</span><span class="l-tech">Concept2 Logbook (OAuth) &middot; Strava (OAuth + sync) &middot; Server LLM (coach)</span></div>
+      <div class="layer"><span class="l-name">Quality / Ops</span><span class="l-tech">Vitest &middot; GitHub Actions CI/CD &middot; Sentry v8.3 &middot; PostHog &middot; EAS Build</span></div>
+    </div>
+    <div class="slide-footer"><span class="brand">Tech stack</span><span>11</span></div>
+  </section>
+
+  <!-- 11. ARCHITECTURE -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Architecture</span>
+      <h2>Clear layering: Screens &rarr; Hooks &rarr; Libs &rarr; Device/Backend.</h2>
+      <p>File-based routing with 4-tab navigation (Crew &middot; Training &middot; Ultra &middot; Profile) and modal screens. Business logic is consistently extracted from screens into testable <span class="mono">lib/</span> modules.</p>
+    </div>
+    <div class="grid g4">
+      <div class="card"><span class="num">670+</span><p>TypeScript/TSX source files.</p></div>
+      <div class="card"><span class="num">40+</span><p>Screens (tabs, modals, dynamic routes).</p></div>
+      <div class="card"><span class="num">48</span><p>prebuilt workout templates.</p></div>
+      <div class="card"><span class="num">21</span><p>PostgreSQL tables with Row Level Security.</p></div>
+    </div>
+    <div class="grid g2" style="margin-top:20px">
+      <div class="card"><h3>Provider hierarchy</h3><p class="mono" style="color:var(--muted)">ThemeProvider &rarr; PM5Provider &rarr; Stack &rarr; Screens</p><p>Devices run via React Context, server data via Supabase + TanStack Query, local data offline-capable via AsyncStorage.</p></div>
+      <div class="card"><h3>Training-intelligence engine</h3><p>Decoupled chain: HR calculations &rarr; fitness tests &rarr; athlete profile &rarr; periodization engine &rarr; training plan. Runs fully locally, no server needed.</p></div>
+    </div>
+    <div class="slide-footer"><span class="brand">Architecture</span><span>12</span></div>
+  </section>
+
+  <!-- 12. BLE MOAT -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">The technical moat</span>
+      <h2>PM5 BLE &amp; CSAFE — this is where the real value sits.</h2>
+      <p>The app is <strong class="fg">master</strong>, the PM5 is <strong class="fg">slave</strong>: ErgUltra programs workouts directly onto the on-board computer and receives real-time data (~every 500&nbsp;ms). This device-near stack can't be copied in weeks.</p>
+    </div>
+    <div class="split-visual">
+      <div class="phone-item">
+        <div class="phone phone-sm"><div class="phone-screen"><span class="phone-island"></span>
+          <img src="screen-devices-pm5.png" alt="ErgUltra device manager — SkiErg, RowErg, BikeErg connect/disconnect (dark mode)" />
+        </div></div>
+        <div class="phone-cap"><div class="pc-k">Multi-erg</div><div class="pc-t">Up to 3 PM5s at once</div><div class="pc-d">SkiErg &middot; RowErg &middot; BikeErg connected simultaneously for the rotation.</div></div>
+      </div>
+      <div>
+        <ul class="clean">
+          <li><strong>CSAFE protocol</strong> — frames, byte-stuffing, command builders based on the open Concept2 spec.</li>
+          <li><strong>Workout programming</strong> — distance, countdown, native FIXEDTIME intervals directly on the PM5.</li>
+          <li><strong>Live data</strong> — distance, pace, watts, stroke rate, HR, per-stroke force curves.</li>
+          <li><strong>Auto-reconnect</strong> — exponential backoff, health checks, characteristic caching.</li>
+          <li><strong>&ldquo;Wait for first stroke&rdquo;</strong> — timer sync straight from the device's BLE data.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="phone-landscape"><div class="pl-screen">
+      <img src="screen-ultra-live.png" alt="ErgUltra live Solo Ultra session — countdown, pace, watts, stroke, elapsed from the PM5 (dark mode, landscape)" />
+    </div></div>
+    <div class="app-caption">Live Solo Ultra session — metrics rendered in real time straight from the PM5</div>
+    <div class="card violet" style="margin-top:22px"><p style="color:var(--fg)"><strong>Principle &ldquo;Custom stack = moat&rdquo;:</strong> any simplification of this BLE/CSAFE/PM5 path would destroy the differentiation. This is exactly where the external review must be most careful.</p></div>
+    <div class="slide-footer"><span class="brand">BLE moat</span><span>13</span></div>
+  </section>
+
+  <!-- 13. TRAINING SCIENCE + VIZ -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Sport science &amp; premium visualization</span>
+      <h2>Whoop-level data depth, rendered live.</h2>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Training intelligence</h3>
+        <ul class="clean" style="margin-top:12px">
+          <li>HRV: <strong>RMSSD, SDNN, pNN50</strong>, readiness score 0–100</li>
+          <li>VO2max (ACSM), HR zones (Karvonen), watt zones, TRIMP</li>
+          <li>Periodization: 3:1 block model, 80/20 polarized (Seiler)</li>
+          <li>4 fitness tests: 2k &middot; 6-min &middot; FTP &middot; Cooper</li>
+        </ul>
+      </div>
+      <div class="app-dark">
+        <div class="ad-bar">
+          <div class="ad-title"><span class="ad-live"></span> Force Curve &middot; Heatmap Live</div>
+          <div class="ad-tag">60 fps &middot; Skia</div>
+        </div>
+        <svg class="ad-curve" viewBox="0 0 320 120" preserveAspectRatio="none" role="img" aria-label="Live force curve heatmap">
+          <defs>
+            <linearGradient id="fc" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#1E3A8A" />
+              <stop offset="0.45" stop-color="#7C3AED" />
+              <stop offset="0.8" stop-color="#EC4899" />
+              <stop offset="1" stop-color="#FFFFFF" />
+            </linearGradient>
+            <linearGradient id="fcfill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#7C3AED" stop-opacity="0.42" />
+              <stop offset="1" stop-color="#7C3AED" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <path d="M0,118 C40,118 55,20 110,14 C165,8 175,60 220,74 C265,88 295,110 320,116 L320,120 L0,120 Z" fill="url(#fcfill)" />
+          <path d="M0,118 C40,118 55,20 110,14 C165,8 175,60 220,74 C265,88 295,110 320,116" fill="none" stroke="url(#fc)" stroke-width="3" stroke-linecap="round" />
+        </svg>
+        <div class="ad-chips">
+          <span class="ad-chip on">Single Stroke</span>
+          <span class="ad-chip">Heatmap</span>
+          <span class="ad-chip">Stroke Cycle</span>
+        </div>
+      </div>
+    </div>
+    <div class="app-caption">Design concept of the live force-curve heatmap (Skia) — modes live-switchable; on-device rendering in development</div>
+    <div class="phone-row">
+      <div class="phone-item">
+        <div class="phone phone-sm"><div class="phone-screen"><span class="phone-island"></span>
+          <img src="screen-breakdown-charts.png" alt="ErgUltra activity breakdown — watts, heart rate and stroke-rate charts (dark mode)" />
+        </div></div>
+        <div class="phone-cap"><div class="pc-k">Breakdown</div><div class="pc-t">Per-session charts</div><div class="pc-d">Pace, watts, HR &amp; stroke rate over the full workout.</div></div>
+      </div>
+      <div class="phone-item">
+        <div class="phone phone-sm"><div class="phone-screen"><span class="phone-island"></span>
+          <img src="screen-performance-mgmt.png" alt="ErgUltra performance management — CTL, ATL, TSB load metrics (dark mode)" />
+        </div></div>
+        <div class="phone-cap"><div class="pc-k">Load</div><div class="pc-t">CTL / ATL / TSB</div><div class="pc-d">EMA-based fitness, fatigue &amp; form — TSS, NP, IF.</div></div>
+      </div>
+      <div class="phone-item">
+        <div class="phone phone-sm"><div class="phone-screen"><span class="phone-island"></span>
+          <img src="screen-overview.png" alt="ErgUltra training overview — volume, pace, VO2max trend (dark mode)" />
+        </div></div>
+        <div class="phone-cap"><div class="pc-k">Overview</div><div class="pc-t">Trends &amp; volume</div><div class="pc-d">Weekly volume, average pace &amp; VO2max trend at a glance.</div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="brand">Science &amp; viz</span><span>14</span></div>
+  </section>
+
+  <!-- 14. QUALITY / ENGINEERING -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Engineering discipline</span>
+      <h2>&ldquo;Tests and CI/CD are sacred.&rdquo;</h2>
+    </div>
+    <div class="grid g4">
+      <div class="card"><span class="num">3,000+</span><p>automated test cases (Vitest), ~186 test files.</p></div>
+      <div class="card"><span class="num">6</span><p>CI gates: Quality, Contrast, A11y, Tests, Build, Release.</p></div>
+      <div class="card"><span class="num">254</span><p>accessibility annotations across 50+ files.</p></div>
+      <div class="card"><span class="num">SHA</span><p>GitHub Actions pinned to commit SHAs (supply chain).</p></div>
+    </div>
+    <div class="grid g2" style="margin-top:20px">
+      <div class="card"><h3>Process &amp; guardrails</h3><p>Branch protection on <span class="mono">main</span> (Tests + Build Check enforced), pnpm-only, Husky hooks, lint budgets, performance-baseline pipelines (S1–S3), Sentry crash monitoring.</p></div>
+      <div class="card"><h3>Documentation culture</h3><p>&ldquo;Eliminate yourself&rdquo;: 39+ Cursor tickets with root cause, ADRs, learnings, source of truth. Knowledge lives in the repo, not in heads.</p></div>
+    </div>
+    <div class="slide-footer"><span class="brand">Engineering</span><span>15</span></div>
+  </section>
+
+  <!-- 15. SECURITY / STATUS -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Security, GDPR &amp; maturity</span>
+      <h2>Honest status: solid base, clearly named remaining items.</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Area</th><th>Status</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Auth &amp; DB access</td><td><span class="status ok">Live</span></td><td>Supabase Auth (JWT), Row Level Security on tables</td></tr>
+          <tr><td>Secrets &amp; OAuth</td><td><span class="status ok">Live</span></td><td>Edge Functions, SecureStore, server-side validation</td></tr>
+          <tr><td>Monitoring</td><td><span class="status ok">Live</span></td><td>Sentry v8.3, crash reporting, error boundaries</td></tr>
+          <tr><td>GDPR health data (HR/HRV)</td><td><span class="status ok">Live</span></td><td>Explicit Art.&nbsp;9 opt-in consent flow implemented (see screenshot)</td></tr>
+          <tr><td>Account deletion &amp; export</td><td><span class="status warn">Open</span></td><td>Right to erasure + JSON data export</td></tr>
+          <tr><td>Rate limiting / IDOR / XSS</td><td><span class="status warn">Open</span></td><td>Hardening of individual endpoints before public launch</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="phone-row">
+      <div class="phone-item">
+        <div class="phone phone-sm"><div class="phone-screen"><span class="phone-island"></span>
+          <img src="screen-consent.png" alt="ErgUltra health data consent — explicit GDPR Art. 9 opt-in (dark mode)" />
+        </div></div>
+        <div class="phone-cap"><div class="pc-k">GDPR Art. 9</div><div class="pc-t">Explicit consent</div><div class="pc-d">Health data (HR/HRV) requires opt-in; stored locally, revocable.</div></div>
+      </div>
+      <div class="phone-item">
+        <div class="phone phone-sm"><div class="phone-screen"><span class="phone-island"></span>
+          <img src="screen-privacy.png" alt="ErgUltra data &amp; privacy settings — do not sell my data, analytics opt-in, legal (dark mode)" />
+        </div></div>
+        <div class="phone-cap"><div class="pc-k">Data &amp; privacy</div><div class="pc-t">User controls</div><div class="pc-d">&ldquo;Do not sell my data&rdquo;, analytics opt-in, privacy, imprint &amp; ToS.</div></div>
+      </div>
+    </div>
+    <p id="maturity-note" style="margin-top:20px">Maturity: <strong class="fg">beta-ready</strong> — subject to device QA and legal clearance. These exact remaining items are part of the polish we're looking for.</p>
+    <div class="slide-footer"><span class="brand">Security &amp; status</span><span>16</span></div>
+  </section>
+
+  <!-- 16. KNOWN LIMITS -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Transparency</span>
+      <h2>Known work items — where the polish applies.</h2>
+    </div>
+    <div class="grid g2">
+      <ul class="clean">
+        <li><strong>Device QA:</strong> broaden BLE stability across many Android models (EAS Dev Build only, not Expo Go).</li>
+        <li><strong>Large screens:</strong> further refactor <span class="mono">events.tsx</span> &amp; co. (reduce complexity).</li>
+        <li><strong>Test coverage:</strong> CI-enforced floors (~46% statements / ~68% branches) — deepen on BLE/device-heavy paths.</li>
+      </ul>
+      <ul class="clean">
+        <li><strong>Accessibility:</strong> deepen screen-reader flows, dynamic announcements, contrast audit.</li>
+        <li><strong>Legal texts:</strong> privacy policy, terms, imprint, &ldquo;ErgUltra&rdquo; trademark check.</li>
+        <li><strong>Store readiness:</strong> privacy labels, IAP integration (Apple/Google billing).</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="brand">Transparency</span><span>17</span></div>
+  </section>
+
+  <!-- TEAM / FOUNDER -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Team &amp; way of working</span>
+      <h2>Founder-built — with elite-engineering discipline.</h2>
+      <p>ErgUltra is a focused, founder-led build. The goal of this engagement is to turn a founder-built product into a partner-hardened platform.</p>
+    </div>
+    <div class="founder">
+      <div class="founder-badge">
+        <div class="fb-role">Founder &amp; builder</div>
+        <div class="fb-name">Kevin</div>
+        <p>Endurance athlete who turned a Backyard Ultra training idea into a full product — self-taught across the sport science, the PM5 BLE protocol and the market.</p>
+      </div>
+      <div>
+        <ul class="clean">
+          <li><strong>AI-assisted, senior-level build:</strong> a lean founder setup paired with rigorous engineering — tests, CI/CD and code review treated as non-negotiable.</li>
+          <li><strong>&ldquo;Eliminate yourself&rdquo;:</strong> knowledge lives in the repo — ADRs, 39+ tickets with root-cause analysis, a single source-of-truth doc — so a partner can onboard fast.</li>
+          <li><strong>Custom stack as moat:</strong> the PM5 / BLE / CSAFE layer was built deliberately, never shortcut — that's the defensible core.</li>
+          <li><strong>Where a partner comes in:</strong> independent review, hardening capacity and launch experience to take it the last mile.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="brand">Team</span><span>20</span></div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">Roadmap to launch</span>
+      <h2>From beta-ready to App Store — a clear path.</h2>
+      <p>The product is functionally broad and beta-ready. What remains is hardening, validation and store readiness — ideally alongside a partner.</p>
+    </div>
+    <div class="roadmap">
+      <div class="rm-step now"><div class="rm-when">Now &middot; done</div><h3>Product complete</h3><p>Ultra, training platform, community, PM5 BLE and integrations — all built and wired.</p></div>
+      <div class="rm-step"><div class="rm-when">Next &middot; 4–6 wks</div><h3>Audit &amp; hardening</h3><p>External review, GDPR &amp; endpoint hardening, device-QA across Android models.</p></div>
+      <div class="rm-step"><div class="rm-when">Then</div><h3>Closed beta</h3><p>Real athletes, PostHog telemetry, activation-funnel &amp; retention validation.</p></div>
+      <div class="rm-step"><div class="rm-when">Launch</div><h3>Store release</h3><p>iOS/Android store readiness, in-app purchases, public launch &amp; scale.</p></div>
+    </div>
+    <div class="slide-footer"><span class="brand">Roadmap</span><span>21</span></div>
+  </section>
+
+  <!-- 17. THE ASK -->
+  <section class="slide">
+    <div class="head-row">
+      <span class="eyebrow">The engagement</span>
+      <h2>What we need from a review partner.</h2>
+      <p>The app is functionally broad and technically solid. We're looking for an experienced partner to review, harden and deliver the final polish — through to launch.</p>
+    </div>
+    <div class="ask-grid">
+      <div class="ask-card"><div class="n">01</div><h3>Audit</h3><p>Independent code, architecture &amp; security review — with a special focus on the PM5/BLE/CSAFE stack.</p></div>
+      <div class="ask-card"><div class="n">02</div><h3>Hardening</h3><p>GDPR compliance, endpoint hardening, device-QA strategy and performance polish.</p></div>
+      <div class="ask-card"><div class="n">03</div><h3>Launch</h3><p>Store readiness (iOS/Android), IAP, release process and hands-on support into the closed beta.</p></div>
+    </div>
+    <div class="slide-footer"><span class="brand">The engagement</span><span>18</span></div>
+  </section>
+
+  <!-- 18. CLOSE -->
+  <section class="slide cover">
+    <div class="brand-logo">
+      <img src="ergultra-logo.png" alt="ErgUltra" />
+    </div>
+    <h1>One loop. Until only one remains.<br /><span class="accent">Let's make it perfect.</span></h1>
+    <p class="lead" style="margin-top:22px">A training idea with a friend became a serious platform. Now we're looking for the team to bring it to App Store quality with us.</p>
+    <div class="cover-meta">
+      <span class="chip hl">Thank you.</span>
+      <span class="chip">Questions &amp; deep-dive anytime</span>
+      <span class="chip mono">ErgUltra &middot; 2026</span>
+    </div>
+    <div class="contact-row">
+      <span class="contact-chip">Kevin &middot; Founder, ErgUltra</span>
+      <span class="contact-chip mono">[ email ]</span>
+      <span class="contact-chip mono">[ phone / LinkedIn ]</span>
+    </div>
+    <div class="slide-footer"><span class="brand">ErgUltra — Confidential / NDA</span><span>19</span></div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button id="prev" aria-label="Previous">&lsaquo;</button>
+  <span class="count" id="count">01 / 19</span>
+  <button id="next" aria-label="Next">&rsaquo;</button>
+  <button id="present" aria-label="Presentation mode" title="Presentation mode (P)">&#9974;</button>
+</div>
+
+<script>
+  const deck = document.getElementById('deck');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  const countEl = document.getElementById('count');
+  const progress = document.getElementById('progress');
+  const pad = n => String(n).padStart(2, '0');
+
+  // Auto-number slide footers so inserting/reordering slides never requires
+  // manual renumbering (footer page number = slide position).
+  slides.forEach((s, i) => {
+    const footer = s.querySelector('.slide-footer');
+    if (footer && footer.lastElementChild) {
+      footer.lastElementChild.textContent = pad(i + 1);
+    }
+  });
+
+  function current() {
+    const mid = window.innerHeight / 2;
+    let idx = 0;
+    slides.forEach((s, i) => {
+      const r = s.getBoundingClientRect();
+      if (r.top <= mid && r.bottom >= mid) idx = i;
+    });
+    return idx;
+  }
+  function update() {
+    const i = current();
+    countEl.textContent = pad(i + 1) + ' / ' + pad(total);
+    progress.style.width = ((i) / (total - 1) * 100) + '%';
+  }
+  function go(i) {
+    i = Math.max(0, Math.min(total - 1, i));
+    slides[i].scrollIntoView({ behavior: 'smooth' });
+  }
+  document.getElementById('next').onclick = () => go(current() + 1);
+  document.getElementById('prev').onclick = () => go(current() - 1);
+  document.getElementById('present').onclick = () => {
+    deck.classList.toggle('present');
+    if (deck.classList.contains('present')) { deck.scrollTop = slides[current()].offsetTop; }
+  };
+  window.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(current() + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current() - 1); }
+    if (e.key.toLowerCase() === 'p') { document.getElementById('present').click(); }
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End') go(total - 1);
+  });
+  window.addEventListener('scroll', update, { passive: true });
+  deck.addEventListener('scroll', update, { passive: true });
+  update();
+</script>
+</body>
+</html>
