@@ -368,6 +368,17 @@
   .intg-k { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg); margin-bottom: 5px; }
   .intg-cols p { font-size: 0.92rem; }
 
+  /* IP scope list */
+  .ip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 26px; margin-top: 14px; }
+  @media (max-width: 640px) { .ip-grid { grid-template-columns: 1fr; } }
+  .ip-item { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: baseline; padding-bottom: 9px; border-bottom: 1px solid var(--border); }
+  .ip-n { font-weight: 600; color: var(--fg); font-size: 0.9rem; }
+  .ip-d { grid-column: 1 / 2; color: var(--muted); font-size: 0.78rem; line-height: 1.35; }
+  .ip-s { grid-column: 2; grid-row: 1; font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .ip-s.live { color: var(--ok); border: 1px solid var(--ok); }
+  .ip-s.gated { color: var(--warn); border: 1px solid var(--warn); }
+  .ip-s.planned { color: var(--muted-2); border: 1px dashed var(--muted-2); }
+
   /* ---------- Agenda / TOC ---------- */
   .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 44px; margin-top: 8px; }
   @media (max-width: 900px) { .toc-grid { grid-template-columns: 1fr; } }
@@ -820,32 +831,25 @@
   <section class="slide">
     <div class="head-row">
       <span class="eyebrow">IP &amp; defensibility</span>
-      <h2>Defensibility is layered — not a single patent.</h2>
-      <p>The moat is built on four independent layers. The visual innovation is protected by a filed patent; the deeper, compounding advantage is the hand-built protocol stack and the data it produces.</p>
+      <h2>Patent pending — the scoring system, not just a chart.</h2>
+      <p>A US provisional patent (priority date secured) protects a broad system for real-time, multi-dimensional ergometer evaluation. The core is claimed <strong class="fg">before it fully ships</strong> — below is what the patent covers and where each piece stands in the app today.</p>
     </div>
-    <div class="grid g2">
-      <div class="card violet">
-        <span class="tag">01 &middot; Patent pending</span>
-        <h3>Force-curve visualization technology</h3>
-        <p>US provisional patent <strong class="fg">filed via the ErgUltra&nbsp;UG</strong> — priority date secured. The premium force-curve experience is deliberately gated in-app until commercial rollout, so the innovation is claimed before it ships.</p>
-      </div>
-      <div class="card">
-        <span class="tag">02 &middot; Registered trademark</span>
-        <h3>ErgUltra&reg; word mark</h3>
-        <p>The brand is a <strong class="fg">registered trademark</strong> — protecting the name, identity and the category we're defining around endurance erg training.</p>
-      </div>
-      <div class="card">
-        <span class="tag">03 &middot; Trade secret &amp; know-how</span>
-        <h3>The custom PM5 / BLE / CSAFE stack</h3>
-        <p>A correct, resilient CSAFE master that survives hours of real radio conditions is <strong class="fg">years of hand-built know-how</strong>, not a library call. Deliberately deep — and not copyable in weeks.</p>
-      </div>
-      <div class="card">
-        <span class="tag">04 &middot; Network &amp; data moat</span>
-        <h3>Community &amp; training history</h3>
-        <p>Feed, clubs, leaderboards, session history and Concept2 Logbook sync <strong class="fg">compound with every workout</strong> — a switching cost that grows with usage.</p>
+    <div class="card violet">
+      <span class="tag">Patent pending &middot; core scope</span>
+      <div class="ip-grid">
+        <div class="ip-item"><span class="ip-n">Multi-dimensional ErgUltra Score</span><span class="ip-s gated">Gated</span><span class="ip-d">Performance + technique + goal-adherence, context-weighted per training type — computed locally, no cloud.</span></div>
+        <div class="ip-item"><span class="ip-n">Real-time force-curve technique &amp; heatmap</span><span class="ip-s gated">Gated</span><span class="ip-d">Per-stroke curve features, density heatmap, adaptive ideal overlay feeding the technique score.</span></div>
+        <div class="ip-item"><span class="ip-n">ErgoRadar — location-based ranking</span><span class="ip-s planned">Planned</span><span class="ip-d">Radius ranking on the multi-dim score; percentile by age/gender; Local &amp; Country Hero.</span></div>
+        <div class="ip-item"><span class="ip-n">Multi-erg orchestration + aggregate score</span><span class="ip-s live">Engine live</span><span class="ip-d">Sequential multi-device sessions with transition timing — the Solo Ultra engine.</span></div>
+        <div class="ip-item"><span class="ip-n">Ultra Format elimination + spectator</span><span class="ip-s planned">Planned</span><span class="ip-d">Round elimination, projected-finish prediction, live spectator mode.</span></div>
+        <div class="ip-item"><span class="ip-n">BLE/CSAFE core, first-stroke, auto-reconnect</span><span class="ip-s live">Live</span><span class="ip-d">Hand-built CSAFE master, exponential-backoff reconnect, HR-belt, local processing.</span></div>
       </div>
     </div>
-    <div class="card violet" style="margin-top:20px"><p style="color:var(--fg)"><strong>The strategic point:</strong> patents protect the visible innovation, but the durable moat is the protocol depth plus the data network — both get harder to copy over time, not easier.</p></div>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card"><span class="tag">Trademark</span><h3>ErgUltra&reg;</h3><p>Registered word mark — protects the name and the category we're defining.</p></div>
+      <div class="card"><span class="tag">Trade secret</span><h3>Custom PM5 stack</h3><p>A resilient CSAFE master is years of know-how — not a library call, not copyable in weeks.</p></div>
+      <div class="card"><span class="tag">Data moat</span><h3>Community &amp; history</h3><p>Feed, session history &amp; Concept2 Logbook sync compound with every workout.</p></div>
+    </div>
     <div class="slide-footer"><span class="brand">IP &amp; defensibility</span><span>09</span></div>
   </section>
 
